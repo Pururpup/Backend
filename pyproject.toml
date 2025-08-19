@@ -3,10 +3,12 @@ name = "warehouse_backend"
 version = "0.1.0"
 description = ""
 authors = ["Vika"]
+package-mode = false
 
 [tool.poetry.dependencies]
 python = "^3.10"
 requests = "^2.32.3"
+gunicorn = "^23.0.0"
 
 [tool.poetry.dev-dependencies]
 
