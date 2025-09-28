@@ -1,9 +1,8 @@
-from django.http import JsonResponse
 from rest_framework import status, serializers
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from warehouse_app.models import User, Category, Location, Product, Photos
-from warehouse_app.serializers import ProductSerializer, CategorySerializer, LocationSerializer, PhotoSerializer, UserSerializer
+from models import User, Category, Location, Product, Photos
+from serializers import ProductSerializer, CategorySerializer, LocationSerializer, PhotoSerializer, UserSerializer
 
 
 class UserAPIView(APIView):
@@ -12,6 +11,7 @@ class UserAPIView(APIView):
         user_id = User.objects.get(telegram_id=telegram_id)
         serializer = UserSerializer(user_id)
         return Response(serializer.data)
+
 
 class CategoryAPIView(APIView):
     def get(self, request):

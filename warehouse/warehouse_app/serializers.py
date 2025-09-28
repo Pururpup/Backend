@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from rest_framework.serializers import ModelSerializer
-from warehouse_app.models import User, Category, Location, Product, Photos
+from models import User, Category, Location, Product, Photos
 
 
 class UserSerializer(ModelSerializer):
