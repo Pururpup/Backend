@@ -1,16 +1,22 @@
 from rest_framework import status, serializers
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from models import User, Category, Location, Product, Photos
-from serializers import ProductSerializer, CategorySerializer, LocationSerializer, PhotoSerializer, UserSerializer
+from .models import User, Category, Location, Product, Photos
+from .serializers import ProductSerializer, CategorySerializer, LocationSerializer, PhotoSerializer, UserSerializer
 
 
 class UserAPIView(APIView):
     def get(self, request):
         telegram_id = request.query_params.get("user")
-        user_id = User.objects.get(telegram_id=telegram_id)
-        serializer = UserSerializer(user_id)
-        return Response(serializer.data)
+        exists = User.objects.filter(telegram_id=telegram_id).exists()
+        return Response({"is_exists": exists})
+
+    def post(self, request):
+        serializer = UserSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors)
 
 
 class CategoryAPIView(APIView):
@@ -28,7 +34,7 @@ class CategoryAPIView(APIView):
         mutable_data["user"] = user.pk
         serializer = CategorySerializer(data=mutable_data)
         try:
-            if serializer.is_valid(raise_exception=True):
+            if serializer.is_valid():
                 serializer.save()
                 return Response("Категория добавлена")
         except serializers.ValidationError as e:
@@ -71,7 +77,7 @@ class LocationAPIView(APIView):
         mutable_data["user"] = user.pk
         serializer = LocationSerializer(data=mutable_data)
         try:
-            if serializer.is_valid(raise_exception=True):
+            if serializer.is_valid():
                 serializer.save()
                 return Response("Локация добавлена")
         except serializers.ValidationError as e:
@@ -114,7 +120,7 @@ class ProductAPIView(APIView):
         mutable_data["user"] = user.pk
         serializer = ProductSerializer(data=mutable_data)
         try:
-            if serializer.is_valid(raise_exception=True):
+            if serializer.is_valid():
                 serializer.save()
                 return Response("Товар добавлен")
         except serializers.ValidationError as e:

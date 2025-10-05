@@ -7,23 +7,24 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     POETRY_HOME=/opt/poetry \
     POETRY_VIRTUALENVS_CREATE=false
 
-WORKDIR /app
-
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    libpq-dev \
+    build-essential \
     gcc \
+    libpq-dev \
+    python3-dev \
     gettext \
     vim \
     && rm -rf /var/lib/apt/lists/*
 
-
 RUN pip install "poetry==$POETRY_VERSION"
 
+WORKDIR /app
 COPY pyproject.toml poetry.lock* /app/
 RUN poetry install --no-root --no-interaction --no-ansi
 
 COPY . /app
 
+WORKDIR /app/warehouse
 COPY docker/entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
