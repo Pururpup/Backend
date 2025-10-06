@@ -1,0 +1,46 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: django_backend
+    command: gunicorn warehouse.wsgi:application --bind 0.0.0.0:8000
+    volumes:
+      - .:/app
+      - ./warehouse/static:/app/warehouse/static
+      - ./warehouse/media:/app/warehouse/media
+    ports:
+      - "8000:8000"
+    env_file:
+      - ./.env
+    depends_on:
+      - db
+
+  bot:
+    build:
+      context: ../Telegram_bot
+      dockerfile: Dockerfile
+    container_name: telegram_bot
+    command: python main.py
+    volumes:
+      - ../Telegram_bot:/app
+    env_file:
+      - ../Telegram_bot/.env
+    depends_on:
+      - web
+      - db
+
+  db:
+    image: postgres:14
+    container_name: postgres_db
+    env_file:
+      - ./.env
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+volumes:
+  postgres_data:
+  static:
+  media:
